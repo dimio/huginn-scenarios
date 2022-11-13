@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "name": "Habr user comments feed",
+  "description": "Feed of specified Habr users comments",
+  "source_url": false,
+  "guid": "b1deec8780e41776217dacb3b44ae8a6",
+  "tag_fg_color": "#ffffff",
+  "tag_bg_color": "#57e389",
+  "icon": "gear",
+  "exported_at": "2022-11-13T10:55:23Z",
+  "agents": [
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "Habr UCF formatter",
+      "disabled": false,
+      "guid": "1f32f8203272419131ef889fb10b2f6a",
+      "options": {
+        "instructions": {
+          "message": "<p>{{body_text}}</p>",
+          "published": {
+            "date": "{{pretty_date.date}}",
+            "time": "{{pretty_date.time}}",
+            "raw_date": "{{publish_date  | lstrip | rstrip}}"
+          },
+          "author": "{{author | lstrip | rstrip}}",
+          "link": "https://habr.com{{url}}",
+          "title": "{{title}}"
+        },
+        "matchers": [
+          {
+            "path": "{{publish_date  | lstrip | rstrip}}",
+            "regexp": "(?<date>\\d{2}\\.\\d{2}\\.\\d{4})\\s.\\s(?<time>\\d{2}:\\d{2})",
+            "to": "pretty_date"
+          }
+        ],
+        "mode": "clean"
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::DataOutputAgent",
+      "name": "Habr UCF out user 2",
+      "disabled": false,
+      "guid": "4a90d2eb662acb848f80bb45a5a62468",
+      "options": {
+        "secrets": [
+          "habr-ucf"
+        ],
+        "expected_receive_period_in_days": "1",
+        "template": {
+          "title": "Habr comments feed",
+          "description": "Comments feed of {% credential habr_comments_username_1 %} Habr user",
+          "item": {
+            "title": "{{title}}",
+            "description": "{{message}}",
+            "link": "{{link}}",
+            "pubDate": "{{published.date}} {{published.time}}",
+            "dc.creator": "{{author}}"
+          },
+          "language": "ru"
+        },
+        "ns_media": "true"
+      },
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Habr UCF filter user 2",
+      "disabled": false,
+      "guid": "6e36fba9147c0d3ffad994dca4448078",
+      "options": {
+        "expected_receive_period_in_days": "2",
+        "keep_event": "true",
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "{% credential habr_comments_username_2 %}",
+            "path": "author"
+          }
+        ]
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::DataOutputAgent",
+      "name": "Habr UCF out user 1",
+      "disabled": false,
+      "guid": "b90bf0a7b894667040360ae498ea1db9",
+      "options": {
+        "secrets": [
+          "habr-ucf"
+        ],
+        "expected_receive_period_in_days": "1",
+        "template": {
+          "title": "Habr comments feed",
+          "description": "Comments feed of {% credential habr_comments_username_1 %} Habr user",
+          "item": {
+            "title": "{{title}}",
+            "description": "{{message}}",
+            "link": "{{link}}",
+            "pubDate": "{{published.date}} {{published.time}}",
+            "dc.creator": "{{author}}"
+          },
+          "language": "ru"
+        },
+        "ns_media": "true"
+      },
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "Habr UCF source user 1",
+      "disabled": false,
+      "guid": "c3c034e3a4276ec889f45978b90f34f9",
+      "options": {
+        "url": "https://habr.com/ru/users/{% credential habr_comments_username_1 %}/comments/",
+        "mode": "on_change",
+        "expected_update_period_in_days": "30",
+        "extract": {
+          "url": {
+            "css": "a.tm-comment-footer__button",
+            "value": "@href"
+          },
+          "title": {
+            "css": "a.tm-user-comments__header-link",
+            "value": "string(.)"
+          },
+          "body_text": {
+            "css": "div.tm-comment__body-content.tm-comment__body-content_v2",
+            "value": "./node()"
+          },
+          "publish_date": {
+            "css": "a.tm-article-comment__link",
+            "value": "string(.)"
+          },
+          "author": {
+            "css": "a.tm-user-info__username.router-link-active",
+            "value": "string(.)"
+          }
+        }
+      },
+      "schedule": "every_1d",
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::WebsiteAgent",
+      "name": "Habr UCF source user 2",
+      "disabled": false,
+      "guid": "cfc16ada36d40caa22afe2952a402821",
+      "options": {
+        "url": "https://habr.com/ru/users/{% credential habr_comments_username_2 %}/comments/",
+        "mode": "on_change",
+        "expected_update_period_in_days": "30",
+        "extract": {
+          "url": {
+            "css": "a.tm-comment-footer__button",
+            "value": "@href"
+          },
+          "title": {
+            "css": "a.tm-user-comments__header-link",
+            "value": "string(.)"
+          },
+          "body_text": {
+            "css": "div.tm-comment__body-content.tm-comment__body-content_v2",
+            "value": "./node()"
+          },
+          "publish_date": {
+            "css": "a.tm-article-comment__link",
+            "value": "string(.)"
+          },
+          "author": {
+            "css": "a.tm-user-info__username.router-link-active",
+            "value": "string(.)"
+          }
+        }
+      },
+      "schedule": "every_1d",
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::TriggerAgent",
+      "name": "Habr UCF filter user 1",
+      "disabled": false,
+      "guid": "d0489d2feab4cf7e45b06746e65a56be",
+      "options": {
+        "expected_receive_period_in_days": "2",
+        "keep_event": "true",
+        "rules": [
+          {
+            "type": "field==value",
+            "value": "{% credential habr_comments_username_1 %}",
+            "path": "author"
+          }
+        ]
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 2
+    },
+    {
+      "source": 0,
+      "receiver": 6
+    },
+    {
+      "source": 2,
+      "receiver": 1
+    },
+    {
+      "source": 4,
+      "receiver": 0
+    },
+    {
+      "source": 5,
+      "receiver": 0
+    },
+    {
+      "source": 6,
+      "receiver": 3
+    }
+  ],
+  "control_links": [
+
+  ]
+}
