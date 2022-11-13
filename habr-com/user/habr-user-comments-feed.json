@@ -56,7 +56,7 @@
             "description": "{{message}}",
             "link": "{{link}}",
             "pubDate": "{{published.date}} {{published.time}}",
-            "dc.creator": "{{author}}"
+            "dc:creator": "{{author}}"
           },
           "language": "ru"
         },
@@ -101,7 +101,7 @@
             "description": "{{message}}",
             "link": "{{link}}",
             "pubDate": "{{published.date}} {{published.time}}",
-            "dc.creator": "{{author}}"
+            "dc:creator": "{{author}}"
           },
           "language": "ru"
         },
