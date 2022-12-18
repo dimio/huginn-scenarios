@@ -124,7 +124,7 @@
             "value": "@href"
           },
           "title": {
-            "css": "a.tm-user-comments__header-link",
+            "css": "a.tm-user-comments__title-link",
             "value": "string(.)"
           },
           "body_text": {
