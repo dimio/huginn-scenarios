@@ -7,7 +7,7 @@
   "tag_fg_color": "#ffffff",
   "tag_bg_color": "#57e389",
   "icon": "gear",
-  "exported_at": "2022-11-13T10:55:23Z",
+  "exported_at": "2023-06-28T07:28:13Z",
   "agents": [
     {
       "type": "Agents::EventFormattingAgent",
@@ -35,8 +35,8 @@
         ],
         "mode": "clean"
       },
-      "keep_events_for": 259200,
-      "propagate_immediately": false
+      "keep_events_for": 15552000,
+      "propagate_immediately": true
     },
     {
       "type": "Agents::DataOutputAgent",
@@ -80,7 +80,20 @@
           }
         ]
       },
-      "keep_events_for": 259200,
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
+    },
+    {
+      "type": "Agents::DeDuplicationAgent",
+      "name": "Habr UCF deduplicator",
+      "disabled": false,
+      "guid": "a15cb9c4c8abb5b071f914dfeddde9f5",
+      "options": {
+        "property": "",
+        "lookback": "100",
+        "expected_update_period_in_days": "1"
+      },
+      "keep_events_for": 0,
       "propagate_immediately": false
     },
     {
@@ -128,7 +141,7 @@
             "value": "string(.)"
           },
           "body_text": {
-            "css": "div.tm-comment__body-content.tm-comment__body-content_v2",
+            "css": "div.tm-comment__body-content",
             "value": "./node()"
           },
           "publish_date": {
@@ -141,14 +154,14 @@
           }
         }
       },
-      "schedule": "every_1d",
-      "keep_events_for": 259200,
+      "schedule": "every_2h",
+      "keep_events_for": 2592000,
       "propagate_immediately": false
     },
     {
       "type": "Agents::WebsiteAgent",
       "name": "Habr UCF source user 2",
-      "disabled": false,
+      "disabled": true,
       "guid": "cfc16ada36d40caa22afe2952a402821",
       "options": {
         "url": "https://habr.com/ru/users/{% credential habr_comments_username_2 %}/comments/",
@@ -164,7 +177,7 @@
             "value": "string(.)"
           },
           "body_text": {
-            "css": "div.tm-comment__body-content.tm-comment__body-content_v2",
+            "css": "div.tm-comment__body-content",
             "value": "./node()"
           },
           "publish_date": {
@@ -197,26 +210,26 @@
           }
         ]
       },
-      "keep_events_for": 259200,
-      "propagate_immediately": false
+      "keep_events_for": 2592000,
+      "propagate_immediately": true
     }
   ],
   "links": [
     {
       "source": 0,
-      "receiver": 2
-    },
-    {
-      "source": 0,
-      "receiver": 6
+      "receiver": 3
     },
     {
       "source": 2,
       "receiver": 1
     },
     {
-      "source": 4,
-      "receiver": 0
+      "source": 3,
+      "receiver": 2
+    },
+    {
+      "source": 3,
+      "receiver": 7
     },
     {
       "source": 5,
@@ -224,7 +237,11 @@
     },
     {
       "source": 6,
-      "receiver": 3
+      "receiver": 0
+    },
+    {
+      "source": 7,
+      "receiver": 4
     }
   ],
   "control_links": [
