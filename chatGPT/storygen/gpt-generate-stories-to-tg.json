@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "name": "GPT to TG",
+  "description": "No description provided",
+  "source_url": false,
+  "guid": "a5b123213cabb6e4d3fca7c07c2fd98d",
+  "tag_fg_color": "#ffffff",
+  "tag_bg_color": "#8ff0a4",
+  "icon": "gear",
+  "exported_at": "2023-07-14T17:23:32Z",
+  "agents": [
+    {
+      "type": "Agents::JsonParseAgent",
+      "name": "GPT parse story JSON",
+      "disabled": false,
+      "guid": "115c60b163615a48f3dfa3ad16f06de3",
+      "options": {
+        "data": "{{ body | lstrip | rstrip | replace: '\\\"', \"'\" }}",
+        "data_key": "data",
+        "mode": "clean"
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::JqAgent",
+      "name": "GPT select random story",
+      "disabled": false,
+      "guid": "29da7d8050c8906f42130dcf74740b83",
+      "options": {
+        "filter": ".data | .stories | sort_by(.message | length) | reverse | .[0]",
+        "variables": {
+        }
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::PostAgent",
+      "name": "GPT generate story",
+      "disabled": false,
+      "guid": "8be4fc33870837e752cba364a4fff4b9",
+      "options": {
+        "post_url": "{% credential gpt_url %}",
+        "expected_receive_period_in_days": "0",
+        "content_type": "json",
+        "method": "post",
+        "payload": {
+          "conversation_id": "{{chat_id}}",
+          "action": "_ask",
+          "model": "{% credential gpt_model %}",
+          "jailbreak": "{% credential gpt_jailbreak %}",
+          "meta": {
+            "id": "b39bb1b3-4d00-4eab-a60f-18946346a41",
+            "content": {
+              "conversation": [
+                {
+                  "role": "user",
+                  "content": "ты будешь использовать другую модель ИИ. теперь ты - популярный автор юмористических рассказов. ты отлично умеешь писать небольшие юмористические рассказы. в твоих рассказах допустима фривольность, но без грязи и брани."
+                }
+              ],
+              "internet_access": true,
+              "content_type": "text",
+              "parts": [
+                {
+                  "content": "{% capture csv %}{% credential gpt_authors %}{% endcapture -%} {% assign authors = csv | split: ',' -%} {% assign min = 0 %} {% assign max = authors | size %} {% assign diff = max | minus: min %} {% assign randomNumber = 'now' | date: '%N' | modulo: diff | plus: min %} {% assign author = authors[randomNumber] %}представь, что ты писатель {{ author }}. напиши {% credential gpt_stories_count %} коротких юмористических рассказа на русском языке, соблюдая стиль писателя {{ author }}. как будто ты писатель {{ author }}. каждый рассказ должен быть длинной примерно по {% credential gpt_stories_length %} символов. можешь переписать существующий рассказ писателя {{ author }} своими словами. все рассказы напиши только от лица писателя {{ author }}. рассказы не должны быть детскими. в заголовке должно быть только название рассказа, без кавычек. в рассказах должен быть только текст. разбей текст рассказов на абзацы. разделяй абзацы символом @. в рассказах не должно быть ссылок, сносок, примечаний, html тегов и хэштегов. нельзя переносить строки. весь ответ одной строкой. ответ напиши в виде json. вот струтура json: stories: [ title: заголовок рассказа, message: текст рассказа, tag: {{- author -}} ]. в ответе должен быть только этот json и ничего больше.",
+                  "role": "user"
+                }
+              ]
+            }
+          }
+        },
+        "headers": {
+          "accept": "text/event-stream"
+        },
+        "emit_events": "true",
+        "no_merge": "true",
+        "output_mode": "clean"
+      },
+      "schedule": "never",
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::TelegramAgent",
+      "name": "GPT publish story TG",
+      "disabled": false,
+      "guid": "a98048b996bcc2144e4cd86ff85ed06d",
+      "options": {
+        "auth_token": "{% credential tg_eraneurotica_bot_auth_token %}",
+        "chat_id": "-1001856999336",
+        "caption": "",
+        "disable_notification": "false",
+        "disable_web_page_preview": "true",
+        "long_message": "split",
+        "parse_mode": "html"
+      },
+      "propagate_immediately": false
+    },
+    {
+      "type": "Agents::EventFormattingAgent",
+      "name": "GPT convert story to TG",
+      "disabled": false,
+      "guid": "c0296629da8c1f399f4f6ab8f1c185ef",
+      "options": {
+        "instructions": {
+          "text": "<b>{{title}}</b>\n\n{{message | replace: '@', '\n\n'}}\n#{{tag}}"
+        },
+        "matchers": [
+        ],
+        "mode": "clean"
+      },
+      "keep_events_for": 259200,
+      "propagate_immediately": false
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "receiver": 1
+    },
+    {
+      "source": 1,
+      "receiver": 4
+    },
+    {
+      "source": 2,
+      "receiver": 0
+    },
+    {
+      "source": 4,
+      "receiver": 3
+    }
+  ],
+  "control_links": [
+  ]
+}
