@@ -8,4 +8,4 @@ Collection of [Huginn](https://github.com/huginn/huginn) scenarios.
 
 ## chatGPT
 
-+ Generate short stories and send it's to [Telegram](https://telegram.org/):
++ Generate short stories and send it's to [Telegram](https://telegram.org/): [gpt-generate-stories-to-tg](chatGPT/storygen/gpt-generate-stories-to-tg.json)
