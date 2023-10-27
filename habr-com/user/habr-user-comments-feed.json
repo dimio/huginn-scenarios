@@ -7,7 +7,7 @@
   "tag_fg_color": "#ffffff",
   "tag_bg_color": "#57e389",
   "icon": "gear",
-  "exported_at": "2023-06-28T07:28:13Z",
+  "exported_at": "2023-10-27T21:08:55Z",
   "agents": [
     {
       "type": "Agents::EventFormattingAgent",
@@ -29,7 +29,7 @@
         "matchers": [
           {
             "path": "{{publish_date  | lstrip | rstrip}}",
-            "regexp": "(?<date>\\d{2}\\.\\d{2}\\.\\d{4})\\s.\\s(?<time>\\d{2}:\\d{2})",
+            "regexp": ".+datetime=\\\"(?<date>\\d{4}-\\d{2}-\\d{2})T(?<time>\\d{2}:\\d{2}:\\d{2})\\.\\d{3}Z\\\".+",
             "to": "pretty_date"
           }
         ],
@@ -146,7 +146,7 @@
           },
           "publish_date": {
             "css": "a.tm-article-comment__link",
-            "value": "string(.)"
+            "value": "./node()"
           },
           "author": {
             "css": "a.tm-user-info__username.router-link-active",
